@@ -1,0 +1,9 @@
+type CreateDietForm @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  labelDietName: String
+}
+
+type DietModel @model @auth(rules: [{allow: public}]) {
+  id: ID!
+}
+ 
