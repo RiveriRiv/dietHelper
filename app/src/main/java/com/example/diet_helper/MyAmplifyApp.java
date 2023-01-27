@@ -7,7 +7,7 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.AWSDataStorePlugin;
 import com.amplifyframework.api.aws.AWSApiPlugin;
-import com.amplifyframework.predictions.aws.AWSPredictionsPlugin;
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 
 public class MyAmplifyApp extends Application {
 
@@ -15,10 +15,9 @@ public class MyAmplifyApp extends Application {
         super.onCreate();
 
         try {
-            Amplify.addPlugin(new AWSApiPlugin());
             Amplify.addPlugin(new AWSDataStorePlugin());
             Amplify.addPlugin(new AWSCognitoAuthPlugin());
-            Amplify.addPlugin(new AWSPredictionsPlugin());
+            Amplify.addPlugin(new AWSS3StoragePlugin());
             Amplify.configure(getApplicationContext());
             Log.i("MyAmplifyApp", "Initialized Amplify");
         } catch (AmplifyException error) {
