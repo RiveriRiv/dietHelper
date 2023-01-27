@@ -1,10 +1,7 @@
 package com.example.diet_helper;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -12,21 +9,26 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import com.amplifyframework.predictions.models.TextFormatType;
-import com.amplifyframework.predictions.result.IdentifyTextResult;
-import com.amplifyframework.rx.RxAmplify;
+import com.amplifyframework.core.Amplify;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
 
-import java.io.ByteArrayOutputStream;
+import org.json.JSONArray;
+
 import java.io.File;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Uri tmpFile;
+    private Uri imageToCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AndroidNetworking.initialize(getApplicationContext());
 
         setContentView(R.layout.activity_main);
 
@@ -35,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setClickListeners() {
         findViewById(R.id.take_image_button).setOnClickListener(view -> {
-            getTmpFileUri();
-            mGetContent.launch(tmpFile);
+            createTmpFileUri();
+            mGetContent.launch(imageToCheck);
         });
 
         findViewById(R.id.select_image_button).setOnClickListener(view -> {
@@ -45,45 +47,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
     ActivityResultLauncher<Uri> mGetContent = registerForActivityResult(new ActivityResultContracts.TakePicture(),
-            result -> {
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), tmpFile);
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.WEBP,0,stream);
-                    byte[] byteArray = stream.toByteArray();
-
-                    Bitmap yourCompressBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
-
-                    RxAmplify.Predictions.identify(TextFormatType.PLAIN, yourCompressBitmap)
-                            .subscribe(
-                                    resultText -> {
-                                        IdentifyTextResult identifyResult = (IdentifyTextResult) resultText;
-                                        Log.i("MyAmplifyApp", identifyResult.getFullText());
-                                    },
-                                    error -> Log.e("MyAmplifyApp", "Identify text failed", error)
-                            );
-                } catch (Exception e) {
-
-                }
-
-            });
+            result -> checkForBadProducts());
 
 
     ActivityResultLauncher<String> selectImageFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent(),
             uri -> {
-                // Handle the returned Uri
+                imageToCheck = uri;
+                checkForBadProducts();
             });
 
-    private Uri getTmpFileUri() {
+    private void createTmpFileUri() {
         try {
-            tmpFile = FileProvider.getUriForFile(this,
+            imageToCheck = FileProvider.getUriForFile(this,
                     BuildConfig.APPLICATION_ID + ".provider",
-                    File.createTempFile("tmp_image_file", ".png",
+                    File.createTempFile("tmp_image_file", ".jpg",
                             getCacheDir()));
         } catch (IOException e) {
-
+            Log.e("MyAmplifyApp", "Error occurred while creating tmp image: " + e);
         }
+    }
 
-        return tmpFile;
+    private void checkForBadProducts() {
+        try {
+            Amplify.Storage.uploadInputStream(
+                    "ingredients",
+                    getContentResolver().openInputStream(imageToCheck),
+                    success -> Log.e("", ""),
+                    error -> Log.e("MyAmplifyApp", "Identify text failed", error)
+            );
+
+            AndroidNetworking.get("http://10.0.2.2:8080/products/bad")
+                    .addQueryParameter("fileName", "public/ingredients")
+                    .addQueryParameter("dietBadProducts", "sugar")
+                    .addQueryParameter("dietBadProducts", "wheat")
+                    .setTag(this)
+                    .setPriority(Priority.LOW)
+                    .build()
+                    .getAsJSONArray(new JSONArrayRequestListener() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            Log.i("MyAmplifyApp", "Response: " + response);
+                        }
+
+                        @Override
+                        public void onError(ANError error) {
+                            Log.e("MyAmplifyApp", "Error: " + error);
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e("MyAmplifyApp", "Error occurred while checking for bad products: " + e);
+        }
     }
 }

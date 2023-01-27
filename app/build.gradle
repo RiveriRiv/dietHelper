@@ -41,9 +41,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation 'com.amplifyframework:rxbindings:2.1.0'
-    implementation 'com.amplifyframework:aws-storage-s3:2.1.0'
+    implementation 'com.amplifyframework:aws-storage-s3:2.1.1'
     implementation 'com.amplifyframework:aws-predictions:2.1.0'
     implementation 'com.amplifyframework:aws-auth-cognito:2.1.0'
     implementation 'androidx.activity:activity:1.6.1'
     implementation "androidx.fragment:fragment:1.5.5"
+    implementation 'com.github.amitshekhariitbhu.Fast-Android-Networking:android-networking:v1.0.2'
 }
