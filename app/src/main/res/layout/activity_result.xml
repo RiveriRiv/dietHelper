@@ -4,36 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ImageResultActivity">
 
     <RelativeLayout
-        android:id="@+id/rl"
+        android:id="@+id/result_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#c6cabd"
         android:padding="10dp"
-        tools:context=".MainActivity"
+        tools:context=".ImageResultActivity"
+        android:background="#c6cabd"
         tools:layout_editor_absoluteX="-192dp"
-        tools:layout_editor_absoluteY="-16dp">
+        tools:layout_editor_absoluteY="-16dp"
+        >
 
-        <EditText
-            android:id="@+id/add_diet_text"
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/result_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Add a new diet" />
+            android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/add_diet_button"
+            android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/add_diet_text"
-            android:text="Add" />
-
-        <ListView
-            android:id="@+id/diet_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/add_diet_button"></ListView>
+            android:layout_below="@id/result_text"
+            android:text="Back" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

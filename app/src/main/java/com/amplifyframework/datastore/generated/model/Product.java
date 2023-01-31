@@ -8,10 +8,7 @@ import java.util.Objects;
 
 import androidx.core.util.ObjectsCompat;
 
-import com.amplifyframework.core.model.AuthStrategy;
 import com.amplifyframework.core.model.Model;
-import com.amplifyframework.core.model.ModelOperation;
-import com.amplifyframework.core.model.annotations.AuthRule;
 import com.amplifyframework.core.model.annotations.Index;
 import com.amplifyframework.core.model.annotations.ModelConfig;
 import com.amplifyframework.core.model.annotations.ModelField;
@@ -19,22 +16,18 @@ import com.amplifyframework.core.model.query.predicate.QueryField;
 
 import static com.amplifyframework.core.model.query.predicate.QueryField.field;
 
-/** This is an auto generated class representing the Todo type in your schema. */
+/** This is an auto generated class representing the Product type in your schema. */
 @SuppressWarnings("all")
-@ModelConfig(pluralName = "Todos", type = Model.Type.USER, version = 1, authRules = {
-  @AuthRule(allow = AuthStrategy.PUBLIC, operations = { ModelOperation.CREATE, ModelOperation.UPDATE, ModelOperation.DELETE, ModelOperation.READ })
-})
-public final class Todo implements Model {
-  public static final QueryField ID = field("Todo", "id");
-  public static final QueryField NAME = field("Todo", "name");
-  public static final QueryField PRIORITY = field("Todo", "priority");
-  public static final QueryField COMPLETED_AT = field("Todo", "completedAt");
+@ModelConfig(pluralName = "Products", type = Model.Type.USER, version = 1)
+public final class Product implements Model {
+  public static final QueryField ID = field("Product", "id");
+  public static final QueryField NAME = field("Product", "name");
+  public static final QueryField DIET_PRODUCTS_ID = field("Product", "dietProductsId");
   private final @ModelField(targetType="ID", isRequired = true) String id;
   private final @ModelField(targetType="String", isRequired = true) String name;
-  private final @ModelField(targetType="Priority", isRequired = true) Priority priority;
-  private final @ModelField(targetType="AWSDateTime") Temporal.DateTime completedAt;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime updatedAt;
+  private final @ModelField(targetType="ID") String dietProductsId;
   public String resolveIdentifier() {
     return id;
   }
@@ -47,14 +40,6 @@ public final class Todo implements Model {
       return name;
   }
   
-  public Priority getPriority() {
-      return priority;
-  }
-  
-  public Temporal.DateTime getCompletedAt() {
-      return completedAt;
-  }
-  
   public Temporal.DateTime getCreatedAt() {
       return createdAt;
   }
@@ -63,11 +48,14 @@ public final class Todo implements Model {
       return updatedAt;
   }
   
-  private Todo(String id, String name, Priority priority, Temporal.DateTime completedAt) {
+  public String getDietProductsId() {
+      return dietProductsId;
+  }
+  
+  private Product(String id, String name, String dietProductsId) {
     this.id = id;
     this.name = name;
-    this.priority = priority;
-    this.completedAt = completedAt;
+    this.dietProductsId = dietProductsId;
   }
   
   @Override
@@ -77,13 +65,12 @@ public final class Todo implements Model {
       } else if(obj == null || getClass() != obj.getClass()) {
         return false;
       } else {
-      Todo todo = (Todo) obj;
-      return ObjectsCompat.equals(getId(), todo.getId()) &&
-              ObjectsCompat.equals(getName(), todo.getName()) &&
-              ObjectsCompat.equals(getPriority(), todo.getPriority()) &&
-              ObjectsCompat.equals(getCompletedAt(), todo.getCompletedAt()) &&
-              ObjectsCompat.equals(getCreatedAt(), todo.getCreatedAt()) &&
-              ObjectsCompat.equals(getUpdatedAt(), todo.getUpdatedAt());
+      Product product = (Product) obj;
+      return ObjectsCompat.equals(getId(), product.getId()) &&
+              ObjectsCompat.equals(getName(), product.getName()) &&
+              ObjectsCompat.equals(getCreatedAt(), product.getCreatedAt()) &&
+              ObjectsCompat.equals(getUpdatedAt(), product.getUpdatedAt()) &&
+              ObjectsCompat.equals(getDietProductsId(), product.getDietProductsId());
       }
   }
   
@@ -92,10 +79,9 @@ public final class Todo implements Model {
     return new StringBuilder()
       .append(getId())
       .append(getName())
-      .append(getPriority())
-      .append(getCompletedAt())
       .append(getCreatedAt())
       .append(getUpdatedAt())
+      .append(getDietProductsId())
       .toString()
       .hashCode();
   }
@@ -103,13 +89,12 @@ public final class Todo implements Model {
   @Override
    public String toString() {
     return new StringBuilder()
-      .append("Todo {")
+      .append("Product {")
       .append("id=" + String.valueOf(getId()) + ", ")
       .append("name=" + String.valueOf(getName()) + ", ")
-      .append("priority=" + String.valueOf(getPriority()) + ", ")
-      .append("completedAt=" + String.valueOf(getCompletedAt()) + ", ")
       .append("createdAt=" + String.valueOf(getCreatedAt()) + ", ")
-      .append("updatedAt=" + String.valueOf(getUpdatedAt()))
+      .append("updatedAt=" + String.valueOf(getUpdatedAt()) + ", ")
+      .append("dietProductsId=" + String.valueOf(getDietProductsId()))
       .append("}")
       .toString();
   }
@@ -126,10 +111,9 @@ public final class Todo implements Model {
    * @param id the id of the existing item this instance will represent
    * @return an instance of this model with only ID populated
    */
-  public static Todo justId(String id) {
-    return new Todo(
+  public static Product justId(String id) {
+    return new Product(
       id,
-      null,
       null,
       null
     );
@@ -138,59 +122,44 @@ public final class Todo implements Model {
   public CopyOfBuilder copyOfBuilder() {
     return new CopyOfBuilder(id,
       name,
-      priority,
-      completedAt);
+      dietProductsId);
   }
   public interface NameStep {
-    PriorityStep name(String name);
-  }
-  
-
-  public interface PriorityStep {
-    BuildStep priority(Priority priority);
+    BuildStep name(String name);
   }
   
 
   public interface BuildStep {
-    Todo build();
+    Product build();
     BuildStep id(String id);
-    BuildStep completedAt(Temporal.DateTime completedAt);
+    BuildStep dietProductsId(String dietProductsId);
   }
   
 
-  public static class Builder implements NameStep, PriorityStep, BuildStep {
+  public static class Builder implements NameStep, BuildStep {
     private String id;
     private String name;
-    private Priority priority;
-    private Temporal.DateTime completedAt;
+    private String dietProductsId;
     @Override
-     public Todo build() {
+     public Product build() {
         String id = this.id != null ? this.id : UUID.randomUUID().toString();
         
-        return new Todo(
+        return new Product(
           id,
           name,
-          priority,
-          completedAt);
+          dietProductsId);
     }
     
     @Override
-     public PriorityStep name(String name) {
+     public BuildStep name(String name) {
         Objects.requireNonNull(name);
         this.name = name;
         return this;
     }
     
     @Override
-     public BuildStep priority(Priority priority) {
-        Objects.requireNonNull(priority);
-        this.priority = priority;
-        return this;
-    }
-    
-    @Override
-     public BuildStep completedAt(Temporal.DateTime completedAt) {
-        this.completedAt = completedAt;
+     public BuildStep dietProductsId(String dietProductsId) {
+        this.dietProductsId = dietProductsId;
         return this;
     }
     
@@ -206,11 +175,10 @@ public final class Todo implements Model {
   
 
   public final class CopyOfBuilder extends Builder {
-    private CopyOfBuilder(String id, String name, Priority priority, Temporal.DateTime completedAt) {
+    private CopyOfBuilder(String id, String name, String dietProductsId) {
       super.id(id);
       super.name(name)
-        .priority(priority)
-        .completedAt(completedAt);
+        .dietProductsId(dietProductsId);
     }
     
     @Override
@@ -219,13 +187,8 @@ public final class Todo implements Model {
     }
     
     @Override
-     public CopyOfBuilder priority(Priority priority) {
-      return (CopyOfBuilder) super.priority(priority);
-    }
-    
-    @Override
-     public CopyOfBuilder completedAt(Temporal.DateTime completedAt) {
-      return (CopyOfBuilder) super.completedAt(completedAt);
+     public CopyOfBuilder dietProductsId(String dietProductsId) {
+      return (CopyOfBuilder) super.dietProductsId(dietProductsId);
     }
   }
   

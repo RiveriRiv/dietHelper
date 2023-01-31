@@ -1,17 +1,16 @@
 package com.amplifyframework.datastore.generated.model;
 
+import com.amplifyframework.core.model.annotations.HasMany;
 import com.amplifyframework.core.model.temporal.Temporal;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 import java.util.Objects;
 
 import androidx.core.util.ObjectsCompat;
 
-import com.amplifyframework.core.model.AuthStrategy;
 import com.amplifyframework.core.model.Model;
-import com.amplifyframework.core.model.ModelOperation;
-import com.amplifyframework.core.model.annotations.AuthRule;
 import com.amplifyframework.core.model.annotations.Index;
 import com.amplifyframework.core.model.annotations.ModelConfig;
 import com.amplifyframework.core.model.annotations.ModelField;
@@ -19,14 +18,15 @@ import com.amplifyframework.core.model.query.predicate.QueryField;
 
 import static com.amplifyframework.core.model.query.predicate.QueryField.field;
 
-/** This is an auto generated class representing the DietModel type in your schema. */
+/** This is an auto generated class representing the Diet type in your schema. */
 @SuppressWarnings("all")
-@ModelConfig(pluralName = "DietModels", type = Model.Type.USER, version = 1, authRules = {
-  @AuthRule(allow = AuthStrategy.PUBLIC, operations = { ModelOperation.CREATE, ModelOperation.UPDATE, ModelOperation.DELETE, ModelOperation.READ })
-})
-public final class DietModel implements Model {
-  public static final QueryField ID = field("DietModel", "id");
+@ModelConfig(pluralName = "Diets", type = Model.Type.USER, version = 1)
+public final class Diet implements Model, Serializable {
+  public static final QueryField ID = field("Diet", "id");
+  public static final QueryField NAME = field("Diet", "name");
   private final @ModelField(targetType="ID", isRequired = true) String id;
+  private final @ModelField(targetType="String", isRequired = true) String name;
+  private final @ModelField(targetType="Product") @HasMany(associatedWith = "dietProductsId", type = Product.class) List<Product> products = null;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime updatedAt;
   public String resolveIdentifier() {
@@ -37,6 +37,14 @@ public final class DietModel implements Model {
       return id;
   }
   
+  public String getName() {
+      return name;
+  }
+  
+  public List<Product> getProducts() {
+      return products;
+  }
+  
   public Temporal.DateTime getCreatedAt() {
       return createdAt;
   }
@@ -45,8 +53,9 @@ public final class DietModel implements Model {
       return updatedAt;
   }
   
-  private DietModel(String id) {
+  private Diet(String id, String name) {
     this.id = id;
+    this.name = name;
   }
   
   @Override
@@ -56,10 +65,11 @@ public final class DietModel implements Model {
       } else if(obj == null || getClass() != obj.getClass()) {
         return false;
       } else {
-      DietModel dietModel = (DietModel) obj;
-      return ObjectsCompat.equals(getId(), dietModel.getId()) &&
-              ObjectsCompat.equals(getCreatedAt(), dietModel.getCreatedAt()) &&
-              ObjectsCompat.equals(getUpdatedAt(), dietModel.getUpdatedAt());
+      Diet diet = (Diet) obj;
+      return ObjectsCompat.equals(getId(), diet.getId()) &&
+              ObjectsCompat.equals(getName(), diet.getName()) &&
+              ObjectsCompat.equals(getCreatedAt(), diet.getCreatedAt()) &&
+              ObjectsCompat.equals(getUpdatedAt(), diet.getUpdatedAt());
       }
   }
   
@@ -67,6 +77,7 @@ public final class DietModel implements Model {
    public int hashCode() {
     return new StringBuilder()
       .append(getId())
+      .append(getName())
       .append(getCreatedAt())
       .append(getUpdatedAt())
       .toString()
@@ -76,15 +87,16 @@ public final class DietModel implements Model {
   @Override
    public String toString() {
     return new StringBuilder()
-      .append("DietModel {")
+      .append("Diet {")
       .append("id=" + String.valueOf(getId()) + ", ")
+      .append("name=" + String.valueOf(getName()) + ", ")
       .append("createdAt=" + String.valueOf(getCreatedAt()) + ", ")
       .append("updatedAt=" + String.valueOf(getUpdatedAt()))
       .append("}")
       .toString();
   }
   
-  public static BuildStep builder() {
+  public static NameStep builder() {
       return new Builder();
   }
   
@@ -96,29 +108,45 @@ public final class DietModel implements Model {
    * @param id the id of the existing item this instance will represent
    * @return an instance of this model with only ID populated
    */
-  public static DietModel justId(String id) {
-    return new DietModel(
-      id
+  public static Diet justId(String id) {
+    return new Diet(
+      id,
+      null
     );
   }
   
   public CopyOfBuilder copyOfBuilder() {
-    return new CopyOfBuilder(id);
+    return new CopyOfBuilder(id,
+      name);
   }
+  public interface NameStep {
+    BuildStep name(String name);
+  }
+  
+
   public interface BuildStep {
-    DietModel build();
+    Diet build();
     BuildStep id(String id);
   }
   
 
-  public static class Builder implements BuildStep {
+  public static class Builder implements NameStep, BuildStep {
     private String id;
+    private String name;
     @Override
-     public DietModel build() {
+     public Diet build() {
         String id = this.id != null ? this.id : UUID.randomUUID().toString();
         
-        return new DietModel(
-          id);
+        return new Diet(
+          id,
+          name);
+    }
+    
+    @Override
+     public BuildStep name(String name) {
+        Objects.requireNonNull(name);
+        this.name = name;
+        return this;
     }
     
     /**
@@ -133,9 +161,14 @@ public final class DietModel implements Model {
   
 
   public final class CopyOfBuilder extends Builder {
-    private CopyOfBuilder(String id) {
+    private CopyOfBuilder(String id, String name) {
       super.id(id);
-      
+      super.name(name);
+    }
+    
+    @Override
+     public CopyOfBuilder name(String name) {
+      return (CopyOfBuilder) super.name(name);
     }
   }
   
