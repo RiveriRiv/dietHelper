@@ -20,11 +20,14 @@ import com.example.diet_helper.service.ProductsService;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ProductActivity extends AppCompatActivity {
 
     private Uri imageToCheck;
+
+    private String imageName;
 
     private static List<Product> products = new ArrayList<>();
 
@@ -92,20 +95,22 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     ActivityResultLauncher<Uri> mGetContent = registerForActivityResult(new ActivityResultContracts.TakePicture(),
-            result -> productsService.checkForBadProducts(getContentResolver(), imageToCheck, products));
+            result -> productsService.checkForBadProducts(getContentResolver(), imageToCheck, products, imageName));
 
 
     ActivityResultLauncher<String> selectImageFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent(),
             uri -> {
+                imageName = "tmp_image_file" + new Date().getTime();
                 imageToCheck = uri;
-                productsService.checkForBadProducts(getContentResolver(), imageToCheck, products);
+                productsService.checkForBadProducts(getContentResolver(), imageToCheck, products, imageName);
             });
 
     private void createTmpFileUri() {
         try {
+            imageName = "tmp_image_file" + new Date().getTime();
             imageToCheck = FileProvider.getUriForFile(this,
                     BuildConfig.APPLICATION_ID + ".provider",
-                    File.createTempFile("tmp_image_file", ".jpg",
+                    File.createTempFile(imageName, ".jpg",
                             getCacheDir()));
         } catch (IOException e) {
             Log.e("MyAmplifyApp", "Error occurred while creating tmp image: " + e);
