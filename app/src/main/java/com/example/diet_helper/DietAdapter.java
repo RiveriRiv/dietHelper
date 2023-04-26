@@ -49,12 +49,12 @@ public class DietAdapter extends BaseAdapter {
             view = this.inflater.inflate(R.layout.activity_listview, null);
         }
 
-        TextView text = view.findViewById(R.id.label);
+        TextView text = view.findViewById(R.id.run_diet);
         text.setText(this.diets.get(position).getName());
         text.setOnClickListener(v -> {
             Intent myIntent = new Intent(activity, ProductActivity.class);
             myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            myIntent.putExtra("diet", this.diets.get(position));
+            myIntent.putExtra("diet", String.valueOf(this.diets.get(position).getId()));
             activity.getApplicationContext().startActivity(myIntent);
         });
 
@@ -67,9 +67,9 @@ public class DietAdapter extends BaseAdapter {
             );
 
             this.diets.remove(position);
-            notifyDataSetChanged();
-
         });
+
+        notifyDataSetChanged();
 
         return view;
     }

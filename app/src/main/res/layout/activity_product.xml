@@ -1,73 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/products"
     tools:context=".ProductActivity">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/product_rl"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        tools:context=".ProductActivity"
-        android:background="#c6cabd"
-        >
-        <EditText
-            android:id="@+id/add_product_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Add a new product"
-            />
-        <Button
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back"
-            android:layout_below="@id/add_product_text"
-            />
-        <Button
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:menu="@menu/menu_photo"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_product_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:clickable="true"
+        android:hint="Add a new product"
+        android:focusable="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/add_product_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add"
-            android:layout_below="@id/back"
-            />
-        <ListView
-            android:id="@+id/product_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/add_product_button" >
-        </ListView>
-    </RelativeLayout>
+            app:cornerRadius="4dp"
+            android:padding="16dp"
+            android:text="Add" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/take_image_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="16dp"
-        android:text="Take image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/select_image_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/select_image_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+    <com.google.android.material.chip.ChipGroup
+        android:padding="16dp"
+        android:id="@+id/product_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Select gallery-image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/take_image_button" />
+        tools:listitem="@layout/activity_productlistview" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

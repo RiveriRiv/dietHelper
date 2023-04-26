@@ -43,7 +43,8 @@ public class ProductsService {
     }
 
     public void check(List<Product> badProducts, String imageName) {
-        ANRequest.GetRequestBuilder getRequestBuilder = AndroidNetworking.get("http://diet-publi-8pyv8elok1ky-1502827037.us-east-1.elb.amazonaws.com/products/bad");
+//        ANRequest.GetRequestBuilder getRequestBuilder = AndroidNetworking.get("http://diet-publi-8pyv8elok1ky-1502827037.us-east-1.elb.amazonaws.com/products/bad");
+        ANRequest.GetRequestBuilder getRequestBuilder = AndroidNetworking.get("http://10.0.2.2:8080/products/bad");
 
         badProducts.forEach(product -> getRequestBuilder.addQueryParameter("dietBadProducts", product.getName()));
 

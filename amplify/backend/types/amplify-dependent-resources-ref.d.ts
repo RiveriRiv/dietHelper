@@ -22,5 +22,11 @@ export type AmplifyDependentResourcesAttributes = {
       "format": "string",
       "region": "string"
     }
+  },
+  "storage": {
+    "veits": {
+      "BucketName": "string",
+      "Region": "string"
+    }
   }
 }

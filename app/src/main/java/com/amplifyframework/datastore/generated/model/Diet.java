@@ -3,14 +3,16 @@ package com.amplifyframework.datastore.generated.model;
 import com.amplifyframework.core.model.annotations.HasMany;
 import com.amplifyframework.core.model.temporal.Temporal;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 import java.util.Objects;
 
 import androidx.core.util.ObjectsCompat;
 
+import com.amplifyframework.core.model.AuthStrategy;
 import com.amplifyframework.core.model.Model;
+import com.amplifyframework.core.model.ModelOperation;
+import com.amplifyframework.core.model.annotations.AuthRule;
 import com.amplifyframework.core.model.annotations.Index;
 import com.amplifyframework.core.model.annotations.ModelConfig;
 import com.amplifyframework.core.model.annotations.ModelField;
@@ -20,13 +22,15 @@ import static com.amplifyframework.core.model.query.predicate.QueryField.field;
 
 /** This is an auto generated class representing the Diet type in your schema. */
 @SuppressWarnings("all")
-@ModelConfig(pluralName = "Diets", type = Model.Type.USER, version = 1)
-public final class Diet implements Model, Serializable {
+@ModelConfig(pluralName = "Diets", type = Model.Type.USER, version = 1, authRules = {
+  @AuthRule(allow = AuthStrategy.PUBLIC, operations = { ModelOperation.CREATE, ModelOperation.UPDATE, ModelOperation.DELETE, ModelOperation.READ })
+})
+public final class Diet implements Model {
   public static final QueryField ID = field("Diet", "id");
   public static final QueryField NAME = field("Diet", "name");
   private final @ModelField(targetType="ID", isRequired = true) String id;
-  private final @ModelField(targetType="String", isRequired = true) String name;
-  private final @ModelField(targetType="Product") @HasMany(associatedWith = "dietProductsId", type = Product.class) List<Product> products = null;
+  private final @ModelField(targetType="String") String name;
+  private final @ModelField(targetType="Product", isRequired = true) @HasMany(associatedWith = "dietProductsId", type = Product.class) List<Product> products = null;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime updatedAt;
   public String resolveIdentifier() {
@@ -96,7 +100,7 @@ public final class Diet implements Model, Serializable {
       .toString();
   }
   
-  public static NameStep builder() {
+  public static BuildStep builder() {
       return new Builder();
   }
   
@@ -119,18 +123,14 @@ public final class Diet implements Model, Serializable {
     return new CopyOfBuilder(id,
       name);
   }
-  public interface NameStep {
+  public interface BuildStep {
+    Diet build();
+    BuildStep id(String id);
     BuildStep name(String name);
   }
   
 
-  public interface BuildStep {
-    Diet build();
-    BuildStep id(String id);
-  }
-  
-
-  public static class Builder implements NameStep, BuildStep {
+  public static class Builder implements BuildStep {
     private String id;
     private String name;
     @Override
@@ -144,7 +144,6 @@ public final class Diet implements Model, Serializable {
     
     @Override
      public BuildStep name(String name) {
-        Objects.requireNonNull(name);
         this.name = name;
         return this;
     }

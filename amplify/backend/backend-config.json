@@ -55,5 +55,12 @@
       "providerPlugin": "awscloudformation",
       "service": "RekognitionAndTextract"
     }
+  },
+  "storage": {
+    "veits": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    }
   }
 }

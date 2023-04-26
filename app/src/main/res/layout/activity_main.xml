@@ -1,39 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/rl"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#c6cabd"
-        android:padding="10dp"
-        tools:context=".MainActivity"
-        tools:layout_editor_absoluteX="-192dp"
-        tools:layout_editor_absoluteY="-16dp">
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-        <EditText
-            android:id="@+id/add_diet_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Add a new diet" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:menu="@menu/menu_main"/>
 
-        <Button
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_diet_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:clickable="true"
+        android:hint="Add a new diet"
+        android:focusable="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/add_diet_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/add_diet_text"
-            android:text="Add" />
-
-        <ListView
-            android:id="@+id/diet_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/add_diet_button"></ListView>
-    </RelativeLayout>
+            app:cornerRadius="4dp"
+            android:text="Add" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ListView
+        android:id="@+id/diet_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/my_toolbar"
+        tools:listitem="@layout/activity_listview"></ListView>
+
+</LinearLayout>

@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/back"
+        android:title="Back"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/select_image_button"
+        android:title="Select gallery image"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/take_image_button"
+        android:title="Photo"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_item_settings"
+        android:title="Settings"
+        app:showAsAction="never"/>
+
+</menu>

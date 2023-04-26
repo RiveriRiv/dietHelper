@@ -2,14 +2,16 @@ package com.example.diet_helper;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.amplifyframework.api.graphql.model.ModelMutation;
+import com.amplifyframework.api.graphql.model.ModelQuery;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Diet;
 import com.androidnetworking.AndroidNetworking;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,32 +37,34 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.diet_list);
         listView.setAdapter(adapter);
 
-        Amplify.DataStore.query(Diet.class,
-                allDiets -> {
-                    while (allDiets.hasNext()) {
-                        Diet diet = allDiets.next();
+        Amplify.API.query(
+                ModelQuery.list(Diet.class),
+                response -> {
+                    if (response.getData() != null) {
+                    response.getData().forEach(diet -> {
                         adapter.add(diet);
-                        adapter.notifyDataSetChanged();
                         Log.i("MyAmplifyApp", "Title: " + diet.getName());
-                    }
-                },
+                    });
+                }},
                 failure -> Log.e("MyAmplifyApp", "Query failed.", failure)
         );
+
+        adapter.notifyDataSetChanged();
     }
 
     private void setClickListeners() {
         findViewById(R.id.add_diet_button).setOnClickListener(view -> {
-            EditText editText = findViewById(R.id.add_diet_text);
+            TextInputLayout editText = findViewById(R.id.add_diet_text);
 
-            if (editText.getText().toString().isBlank()) {
+            if (editText.getEditText().getText().toString().isBlank()) {
                 return;
             }
 
             Diet diet = Diet.builder()
-                    .name(editText.getText().toString())
+                    .name(editText.getEditText().getText().toString())
                     .build();
 
-            Amplify.DataStore.save(diet,
+            Amplify.API.mutate(ModelMutation.create(diet),
                     success -> Log.i("MyAmplifyApp", "Created a new diet successfully"),
                     error -> Log.e("MyAmplifyApp", "Error creating diet", error)
             );

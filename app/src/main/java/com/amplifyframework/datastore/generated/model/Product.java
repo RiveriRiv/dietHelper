@@ -8,7 +8,10 @@ import java.util.Objects;
 
 import androidx.core.util.ObjectsCompat;
 
+import com.amplifyframework.core.model.AuthStrategy;
 import com.amplifyframework.core.model.Model;
+import com.amplifyframework.core.model.ModelOperation;
+import com.amplifyframework.core.model.annotations.AuthRule;
 import com.amplifyframework.core.model.annotations.Index;
 import com.amplifyframework.core.model.annotations.ModelConfig;
 import com.amplifyframework.core.model.annotations.ModelField;
@@ -18,13 +21,15 @@ import static com.amplifyframework.core.model.query.predicate.QueryField.field;
 
 /** This is an auto generated class representing the Product type in your schema. */
 @SuppressWarnings("all")
-@ModelConfig(pluralName = "Products", type = Model.Type.USER, version = 1)
+@ModelConfig(pluralName = "Products", type = Model.Type.USER, version = 1, authRules = {
+  @AuthRule(allow = AuthStrategy.PUBLIC, operations = { ModelOperation.CREATE, ModelOperation.UPDATE, ModelOperation.DELETE, ModelOperation.READ })
+})
 public final class Product implements Model {
   public static final QueryField ID = field("Product", "id");
   public static final QueryField NAME = field("Product", "name");
   public static final QueryField DIET_PRODUCTS_ID = field("Product", "dietProductsId");
   private final @ModelField(targetType="ID", isRequired = true) String id;
-  private final @ModelField(targetType="String", isRequired = true) String name;
+  private final @ModelField(targetType="String") String name;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime updatedAt;
   private final @ModelField(targetType="ID") String dietProductsId;
@@ -99,7 +104,7 @@ public final class Product implements Model {
       .toString();
   }
   
-  public static NameStep builder() {
+  public static BuildStep builder() {
       return new Builder();
   }
   
@@ -124,19 +129,15 @@ public final class Product implements Model {
       name,
       dietProductsId);
   }
-  public interface NameStep {
-    BuildStep name(String name);
-  }
-  
-
   public interface BuildStep {
     Product build();
     BuildStep id(String id);
+    BuildStep name(String name);
     BuildStep dietProductsId(String dietProductsId);
   }
   
 
-  public static class Builder implements NameStep, BuildStep {
+  public static class Builder implements BuildStep {
     private String id;
     private String name;
     private String dietProductsId;
@@ -152,7 +153,6 @@ public final class Product implements Model {
     
     @Override
      public BuildStep name(String name) {
-        Objects.requireNonNull(name);
         this.name = name;
         return this;
     }
