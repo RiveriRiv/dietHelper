@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/flag_gb"
+        android:title="@string/lang_gb"/>
+
+    <item
+        android:id="@+id/flag_de"
+        android:title="@string/lang_de"/>
+
+    <item
+        android:id="@+id/flag_ru"
+        android:title="@string/lang_ru"/>
+
+    <item
+        android:id="@+id/flag_uk"
+        android:title="@string/lang_uk"/>
+</menu>

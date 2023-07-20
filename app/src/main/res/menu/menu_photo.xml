@@ -1,0 +1,31 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/back"
+        android:title="@string/back"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/select_image_button"
+        android:title="@string/select_gallery_image"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/take_image_button"
+        android:title="@string/photo"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_flag_photo"
+        android:title=""
+        app:showAsAction="always"
+        android:orderInCategory="100"
+        app:actionLayout="@layout/dropdown_item" />
+
+    <item
+        android:id="@+id/menu_item_settings"
+        android:title="@string/settings"
+        app:showAsAction="never"/>
+
+</menu>

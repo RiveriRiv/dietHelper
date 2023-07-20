@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Диетический помощник</string>
+    <string name="lang">Русский</string>
+    <string name="add">Добавить</string>
+    <string name="add_a_new_product">Добавить новый продукт</string>
+    <string name="edit">Редактировать</string>
+    <string name="choose_language">Выбрать язык</string>
+    <string name="delete">Удалить</string>
+    <string name="add_a_new_diet">Добавить новый продукт</string>
+    <string name="back">Назад</string>
+    <string name="settings">Settings</string>
+    <string name="select_gallery_image">Галерея</string>
+    <string name="photo">Фото</string>
+</resources>

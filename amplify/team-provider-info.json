@@ -15,7 +15,8 @@
     "categories": {
       "function": {
         "dietHelperFunc": {},
-        "diethelper9a611302": {}
+        "diethelper9a611302": {},
+        "dfdsg": {}
       },
       "auth": {
         "diethelper": {},
@@ -27,6 +28,9 @@
       },
       "predictions": {
         "identifyText": {}
+      },
+      "storage": {
+        "veits": {}
       }
     }
   },
