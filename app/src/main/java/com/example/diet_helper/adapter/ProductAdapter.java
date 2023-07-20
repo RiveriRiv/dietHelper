@@ -1,7 +1,8 @@
-package com.example.diet_helper;
+package com.example.diet_helper.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.amplifyframework.core.Amplify;
-import com.amplifyframework.datastore.generated.model.Diet;
-import com.amplifyframework.datastore.generated.model.Product;
+import com.example.diet_helper.MyAmplifyApp;
+import com.example.diet_helper.R;
+import com.example.diet_helper.dao.AppDatabase;
+import com.example.diet_helper.dao.ProductDao;
+import com.example.diet_helper.model.Diet;
+import com.example.diet_helper.model.Product;
 
 import java.util.List;
 
@@ -56,11 +61,11 @@ public class ProductAdapter extends BaseAdapter {
 
         Button btn = view.findViewById(R.id.delete_diet_button);
         btn.setTag(position);
+
+        AppDatabase appDatabase = ((MyAmplifyApp) activity.getApplicationContext()).getAppDatabase();
+        final ProductDao productDao = appDatabase.productDao();
         btn.setOnClickListener(v -> {
-            Amplify.DataStore.delete(this.products.get(position),
-                    success -> Log.i("MyAmplifyApp", "Created a new product successfully"),
-                    error -> Log.e("MyAmplifyApp", "Error creating product", error)
-            );
+            AsyncTask.execute(() -> productDao.deleteProduct(this.products.get(position)));
 
             this.products.remove(position);
             notifyDataSetChanged();

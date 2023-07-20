@@ -1,22 +1,24 @@
 package com.example.diet_helper;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.Window;
 import android.widget.ListView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-import com.amplifyframework.api.graphql.model.ModelMutation;
-import com.amplifyframework.api.graphql.model.ModelQuery;
-import com.amplifyframework.core.Amplify;
-import com.amplifyframework.datastore.generated.model.Diet;
 import com.androidnetworking.AndroidNetworking;
+import com.example.diet_helper.adapter.DietAdapter;
+import com.example.diet_helper.dao.AppDatabase;
+import com.example.diet_helper.dao.DietDao;
+import com.example.diet_helper.model.Diet;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static List<Diet> diets = new ArrayList<>();
 
@@ -28,28 +30,30 @@ public class MainActivity extends AppCompatActivity {
 
         AndroidNetworking.initialize(getApplicationContext());
 
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_main);
 
         setClickListeners();
 
-        adapter = new DietAdapter(this, diets);
+        AppDatabase appDatabase = ((MyAmplifyApp) getApplicationContext()).getAppDatabase();
+        final DietDao dietDao = appDatabase.dietDao();
 
-        ListView listView = findViewById(R.id.diet_list);
-        listView.setAdapter(adapter);
+        AsyncTask.execute(() -> {
+            List<Diet> foundDiets = dietDao.getAll();
+            runOnUiThread(() -> {
+                diets.addAll(foundDiets);
+                adapter = new DietAdapter(this, diets);
 
-        Amplify.API.query(
-                ModelQuery.list(Diet.class),
-                response -> {
-                    if (response.getData() != null) {
-                    response.getData().forEach(diet -> {
-                        adapter.add(diet);
-                        Log.i("MyAmplifyApp", "Title: " + diet.getName());
-                    });
-                }},
-                failure -> Log.e("MyAmplifyApp", "Query failed.", failure)
-        );
+                ListView listView = findViewById(R.id.diet_list);
+                listView.setAdapter(adapter);
 
-        adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+            });
+        });
+
+        Toolbar toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void setClickListeners() {
@@ -60,17 +64,24 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            Diet diet = Diet.builder()
-                    .name(editText.getEditText().getText().toString())
-                    .build();
+            Diet diet = new Diet(editText.getEditText().getText().toString());
 
-            Amplify.API.mutate(ModelMutation.create(diet),
-                    success -> Log.i("MyAmplifyApp", "Created a new diet successfully"),
-                    error -> Log.e("MyAmplifyApp", "Error creating diet", error)
-            );
+            AppDatabase appDatabase = ((MyAmplifyApp) getApplicationContext()).getAppDatabase();
+            final DietDao dietDao = appDatabase.dietDao();
+
+            AsyncTask.execute(() -> dietDao.insertDiet(diet));
 
             adapter.add(diet);
             adapter.notifyDataSetChanged();
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        addFlags(menu.findItem(R.id.action_flag));
+
+        return true;
     }
 }

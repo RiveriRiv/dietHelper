@@ -11,14 +11,15 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        android:theme="@style/Theme.Material3.DayNight">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/my_toolbar"
+            android:id="@+id/my_toolbar_product"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:menu="@menu/menu_photo"/>
+            app:menu="@menu/menu_photo"
+            android:theme="@style/Theme.Material3.DayNight"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -28,7 +29,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:clickable="true"
-        android:hint="Add a new product"
+        android:hint="@string/add_a_new_product"
         android:focusable="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -41,7 +42,7 @@
             android:layout_height="wrap_content"
             app:cornerRadius="4dp"
             android:padding="16dp"
-            android:text="Add" />
+            android:text="@string/add" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

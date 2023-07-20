@@ -1,24 +1,25 @@
 package com.example.diet_helper;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.view.Menu;
+import android.view.View;
+import android.view.Window;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
-import com.amplifyframework.api.graphql.model.ModelMutation;
-import com.amplifyframework.api.graphql.model.ModelQuery;
-import com.amplifyframework.core.Amplify;
-import com.amplifyframework.core.model.query.QueryOptions;
-import com.amplifyframework.core.model.query.predicate.QueryPredicate;
-import com.amplifyframework.datastore.generated.model.Diet;
-import com.amplifyframework.datastore.generated.model.Product;
 import com.androidnetworking.AndroidNetworking;
+import com.example.diet_helper.adapter.ProductAdapter;
+import com.example.diet_helper.dao.AppDatabase;
+import com.example.diet_helper.dao.ProductDao;
+import com.example.diet_helper.dao.ProductDietDao;
+import com.example.diet_helper.model.Diet;
+import com.example.diet_helper.model.Product;
 import com.example.diet_helper.service.ProductsService;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -29,8 +30,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends BaseActivity {
 
     private Uri imageToCheck;
 
@@ -48,38 +50,45 @@ public class ProductActivity extends AppCompatActivity {
 
         AndroidNetworking.initialize(getApplicationContext());
 
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_product);
 
         productsService = new ProductsService(this);
 
         final ChipGroup chipGroup = findViewById(R.id.product_list);
 
-        String dietId = (String) getIntent().getExtras().get("diet");
+        Long dietId = (Long) getIntent().getExtras().get("diet");
 
-            Amplify.API.query(
-                ModelQuery.get(Diet.class, dietId),
-                response -> {
-                    Diet foundDiet = (Diet) (response.getData());
-                    List<Product> products = foundDiet.getProducts();
+        AppDatabase appDatabase = ((MyAmplifyApp) getApplicationContext()).getAppDatabase();
+        final ProductDietDao dietDao = appDatabase.productDietDao();
+        final ProductDao productDao = appDatabase.productDao();
 
-                    if (products != null) {
-                        runOnUiThread(new Runnable() {
-                                          @Override
-                                          public void run() {
-                        chipGroup.removeAllViews();
-                        products.forEach(product -> {
-                            Chip chip = new Chip(chipGroup.getContext());
-                            chip.setText(product.getName());
-                            chip.setCloseIconVisible(true);
-                            chipGroup.addView(chip);
+        AsyncTask.execute(() -> dietDao.loadDietAndProducts(dietId).forEach((key, value) -> {
+
+            if ((List<Product>) value != null) {
+                runOnUiThread(() -> {
+                    chipGroup.removeAllViews();
+                    ((List<Product>) value).forEach(product -> {
+                        Chip chip = new Chip(chipGroup.getContext());
+                        chip.setText(product.getName());
+                        chip.setCloseIconVisible(true);
+
+                        chip.setOnCloseIconClickListener(v -> {
+                            chipGroup.removeView(chip);
+                            AsyncTask.execute(() -> productDao.deleteProduct(product));
                         });
-                       chipGroup.requestLayout();
-                    }});
-                    }},
-                error -> Log.e("MyAmplifyApp", error.toString(), error)
-        );
+                        chipGroup.addView(chip);
+                    });
+                    chipGroup.requestLayout();
+                });
+            }
+        }));
 
         setClickListeners(chipGroup);
+
+        Toolbar toolbar = findViewById(R.id.my_toolbar_product);
+        setSupportActionBar(toolbar);
     }
 
     private void setClickListeners(final ChipGroup chipGroup) {
@@ -90,38 +99,27 @@ public class ProductActivity extends AppCompatActivity {
                 return;
             }
 
-            String dietId = (String) getIntent().getExtras().get("diet");
-            Product product = Product.builder()
-                    .name(editText.getEditText().getText().toString())
-                    .dietProductsId(dietId)
-                    .build();
+            Long dietId = (Long) getIntent().getExtras().get("diet");
+            Product product = new Product(editText.getEditText().getText().toString(), dietId);
 
-            Amplify.API.query(
-                    ModelQuery.get(Diet.class, dietId),
-                    response -> {
-                        Diet foundDiet = (Diet) (response.getData());
+            AppDatabase appDatabase = ((MyAmplifyApp) this.getApplicationContext()).getAppDatabase();
+            final ProductDao productDao = appDatabase.productDao();
 
-                        foundDiet.getProducts().add(product);
+            AsyncTask.execute(() -> {
+                productDao.insertProduct(product);
 
-                        Amplify.API.mutate(ModelMutation.update(foundDiet),
-                                success -> Log.i("MyAmplifyApp", "Created a new product successfully"),
-                                error -> Log.e("MyAmplifyApp",  "Error creating product", error)
-                        );
-                    },
-                    error -> Log.e("MyAmplifyApp", error.toString(), error)
-            );
+                runOnUiThread(() -> {
+                    Chip chip = new Chip(chipGroup.getContext());
+                    chip.setText(product.getName());
+                    chip.setCloseIconVisible(true);
 
-            Chip chip = new Chip(this);
-            chip.setText(product.getName());
-            chip.setCloseIconVisible(true);
-            chip.setOnCloseIconClickListener(v -> {
-                chipGroup.removeView(chip);
-                Amplify.DataStore.delete(product,
-                        success -> Log.i("MyAmplifyApp", "Deleted the product successfully"),
-                        error -> Log.e("MyAmplifyApp",  "Error deleting product", error)
-                );
+                    chip.setOnCloseIconClickListener(v -> {
+                        chipGroup.removeView(chip);
+                        AsyncTask.execute(() -> productDao.deleteProduct(product));
+                    });
+                    chipGroup.addView(chip);
+                });
             });
-            chipGroup.addView(chip);
         });
 
         findViewById(R.id.back).setOnClickListener(view -> finish());
@@ -137,14 +135,43 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     ActivityResultLauncher<Uri> mGetContent = registerForActivityResult(new ActivityResultContracts.TakePicture(),
-            result -> productsService.checkForBadProducts(getContentResolver(), imageToCheck, products, imageName));
+            result -> {
+                final ChipGroup chipGroup = findViewById(R.id.product_list);
+
+                List<String> productNames = new ArrayList<>();
+
+                int chipCount = chipGroup.getChildCount();
+                for (int i = 0; i < chipCount; i++) {
+                    View view = chipGroup.getChildAt(i);
+                    if (view instanceof Chip) {
+                        Chip chip = (Chip) view;
+                        productNames.add(chip.getText().toString());
+                    }
+                }
+
+                productsService.checkForBadProducts(getContentResolver(), imageToCheck, productNames, imageName);
+            });
 
 
     ActivityResultLauncher<String> selectImageFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent(),
             uri -> {
                 imageName = "tmp_image_file" + new Date().getTime();
                 imageToCheck = uri;
-                productsService.checkForBadProducts(getContentResolver(), imageToCheck, products, imageName);
+
+                final ChipGroup chipGroup = findViewById(R.id.product_list);
+
+                List<String> productNames = new ArrayList<>();
+
+                int chipCount = chipGroup.getChildCount();
+                for (int i = 0; i < chipCount; i++) {
+                    View view = chipGroup.getChildAt(i);
+                    if (view instanceof Chip) {
+                        Chip chip = (Chip) view;
+                        productNames.add(chip.getText().toString());
+                    }
+                }
+
+                productsService.checkForBadProducts(getContentResolver(), imageToCheck, productNames, imageName);
             });
 
     private void createTmpFileUri() {
@@ -157,5 +184,14 @@ public class ProductActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e("MyAmplifyApp", "Error occurred while creating tmp image: " + e);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_photo, menu);
+
+        addFlags(menu.findItem(R.id.action_flag_photo));
+
+        return true;
     }
 }

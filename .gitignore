@@ -120,3 +120,4 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+/amplify/backend/storage/veits/cli-inputs.json

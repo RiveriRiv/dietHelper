@@ -7,13 +7,13 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.amplifyframework.core.Amplify;
-import com.amplifyframework.datastore.generated.model.Product;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.example.diet_helper.ImageResultActivity;
+import com.example.diet_helper.model.Product;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,12 +29,12 @@ public class ProductsService {
         this.activity = activity;
     }
 
-    public void checkForBadProducts(ContentResolver contentResolver, Uri imageToCheck, List<Product> badProducts, String imageName) {
+    public void checkForBadProducts(ContentResolver contentResolver, Uri imageToCheck, List<String> productNames, String imageName) {
         try {
             Amplify.Storage.uploadInputStream(
                     imageName,
                     contentResolver.openInputStream(imageToCheck),
-                    success -> check(badProducts, imageName),
+                    success -> check(productNames, imageName),
                     error -> Log.e("MyAmplifyApp", "Identify text failed", error)
             );
         } catch (Exception e) {
@@ -42,11 +42,10 @@ public class ProductsService {
         }
     }
 
-    public void check(List<Product> badProducts, String imageName) {
-//        ANRequest.GetRequestBuilder getRequestBuilder = AndroidNetworking.get("http://diet-publi-8pyv8elok1ky-1502827037.us-east-1.elb.amazonaws.com/products/bad");
-        ANRequest.GetRequestBuilder getRequestBuilder = AndroidNetworking.get("http://10.0.2.2:8080/products/bad");
+    public void check(List<String> productNames, String imageName) {
+        ANRequest.GetRequestBuilder getRequestBuilder = AndroidNetworking.get(PropertiesReader.getDietServiceUrl());
 
-        badProducts.forEach(product -> getRequestBuilder.addQueryParameter("dietBadProducts", product.getName()));
+        productNames.forEach(productName -> getRequestBuilder.addQueryParameter("dietBadProducts", productName));
 
         getRequestBuilder
                 .addQueryParameter("fileName", "public/" + imageName)
@@ -64,13 +63,25 @@ public class ProductsService {
 
                             StringBuilder result = new StringBuilder();
 
+                            if (response.length() == 0) {
+                                activity.startActivity(myIntent);
+                                return;
+                            }
+
+                            try {
                             for (int i = 0; i < response.length(); i++) {
-                                try {
+                                if (i == 0) {
+                                    result.append(((JSONObject) response.get(i)).get("productName"));
+                                } else {
                                     result.append(", ").append(((JSONObject) response.get(i)).get("productName"));
-                                } catch (JSONException e) {
-                                    Log.e("Bad result: ", e.getMessage());
                                 }
                             }
+
+                            } catch (JSONException e) {
+                                Log.e("Bad result: ", e.getMessage());
+                            }
+
+
                             myIntent.putExtra("badProducts", result.toString());
                             activity.startActivity(myIntent);
                         }
