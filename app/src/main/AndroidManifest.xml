@@ -19,6 +19,9 @@
         android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true"
         tools:targetApi="33">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7402123668550565~4895367017"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
