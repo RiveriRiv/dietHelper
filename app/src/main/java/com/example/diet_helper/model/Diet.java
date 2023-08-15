@@ -21,6 +21,10 @@ public final class Diet {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Diet(Long id, String name) {
         this.id = id;
         this.name = name;

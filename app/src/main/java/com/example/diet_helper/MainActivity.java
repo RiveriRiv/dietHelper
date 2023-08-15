@@ -3,11 +3,13 @@ package com.example.diet_helper;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.amplifyframework.core.InitializationStatus;
 import com.androidnetworking.AndroidNetworking;
 import com.example.diet_helper.adapter.DietAdapter;
 import com.example.diet_helper.dao.AppDatabase;

@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.diet_helper.model.Diet;
 
@@ -18,6 +19,9 @@ public interface DietDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Long insertDiet(Diet diet);
+
+    @Update
+    void updateDiet(Diet diet);
 
     @Delete
     void deleteDiet(Diet diet);

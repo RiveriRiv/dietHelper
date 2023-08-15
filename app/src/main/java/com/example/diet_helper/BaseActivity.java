@@ -42,7 +42,7 @@ public class BaseActivity extends AppCompatActivity {
             flagButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.flag_ru, getTheme()));
         } else if (locale.getLanguage().startsWith("de")) {
             flagButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.flag_de, getTheme()));
-        } else if (locale.getLanguage().startsWith("ua")) {
+        } else if (locale.getLanguage().startsWith("uk")) {
             flagButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.flag_uk, getTheme()));
         }
 

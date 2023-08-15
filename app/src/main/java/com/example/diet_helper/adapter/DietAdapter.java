@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -87,16 +90,42 @@ public class DietAdapter extends BaseAdapter {
         Button editBtn = view.findViewById(R.id.edit_diet);
         editBtn.setTag(position);
 
-        TextInputEditText finalText = text;
-
         editBtn.setOnClickListener(v -> {
-            finalText.requestFocus();
+            text.setFocusable(true);
+            text.setFocusableInTouchMode(true);
+            text.requestFocus();
 
             InputMethodManager imm = (InputMethodManager) activity.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(finalText, InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(text, InputMethodManager.SHOW_IMPLICIT);
         });
 
+        text.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                text.setFocusable(false);
+                text.setFocusableInTouchMode(false);
+                return true;
+            }
+            return false;
+        });
 
+        text.setOnEditorActionListener((v, actionId, event) -> {
+            AppDatabase appDatabase = ((MyAmplifyApp) activity.getApplicationContext()).getAppDatabase();
+            final DietDao dietDao = appDatabase.dietDao();
+
+                AsyncTask.execute(() -> {
+                    Diet diet = diets.get(position);
+                    diet.setName(text.getText().toString());
+                    dietDao.updateDiet(diet);
+                });
+                text.clearFocus();
+                return true;
+        });
+
+        View rootView = activity.findViewById(android.R.id.content);
+
+        rootView.setOnClickListener(v -> {
+            text.clearFocus();
+        });
 
         notifyDataSetChanged();
 
