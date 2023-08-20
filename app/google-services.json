@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:31227241297:android:155970b2c9082303d42970",
         "android_client_info": {
-          "package_name": "com.example.diet_helper"
+          "package_name": "com.diet.diet_helper"
         }
       },
       "oauth_client": [

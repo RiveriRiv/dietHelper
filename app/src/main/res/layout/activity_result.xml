@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ImageResultActivity">
+    tools:context="com.diet.diet_helper.ImageResultActivity">
 
     <RelativeLayout
         android:id="@+id/result_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp"
-        tools:context=".ImageResultActivity"
+        tools:context="com.diet.diet_helper.ImageResultActivity"
         android:background="#c6cabd"
         tools:layout_editor_absoluteX="-192dp"
         tools:layout_editor_absoluteY="-16dp"
