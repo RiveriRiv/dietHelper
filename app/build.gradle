@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.diet_helper'
+    namespace 'com.diet.diet_helper'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.diet_helper"
+        applicationId "com.diet.diet_helper"
         minSdk 24
         targetSdk 33
         versionCode 1

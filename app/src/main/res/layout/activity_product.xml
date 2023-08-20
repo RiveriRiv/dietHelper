@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/products"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/products"
-    tools:context=".ProductActivity">
+    android:visibility="visible"
+    tools:context="com.diet.diet_helper.ProductActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -18,19 +19,34 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:menu="@menu/menu_photo"
-            android:theme="@style/Theme.Material3.DayNight"/>
+            android:theme="@style/Theme.Material3.DayNight"
+            app:menu="@menu/menu_photo" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/overlayLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#88000000"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
+
+    </RelativeLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_product_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:clickable="true"
+        android:focusable="true"
         android:hint="@string/add_a_new_product"
-        android:focusable="true">
+        android:padding="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -40,18 +56,18 @@
             android:id="@+id/add_product_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cornerRadius="4dp"
             android:padding="16dp"
-            android:text="@string/add" />
+            android:text="@string/add"
+            app:cornerRadius="4dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.chip.ChipGroup
-        android:padding="16dp"
         android:id="@+id/product_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
+        android:padding="16dp"
         tools:listitem="@layout/activity_productlistview" />
 
 </LinearLayout>

@@ -36,12 +36,12 @@
                     <com.google.android.material.textfield.TextInputEditText xmlns:android="http://schemas.android.com/apk/res/android"
                         android:id="@+id/label"
                         android:imeOptions="actionDone"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:focusable="false"
                         android:gravity="center"
-                        android:textAppearance="?attr/textAppearanceTitleLarge"
+                        android:textSize="24sp"
                         android:backgroundTint="@android:color/transparent"/>
                 </LinearLayout>
 
